@@ -1,58 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NumericalCalculations
 {
     public class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Console.ReadKey();
-        }
-    }
-
-    public static class CalculationHandler
-    {
-        public static BigInteger Add(BigInteger num1, BigInteger num2) => num1 + num2;
-        public static BigInteger Subtract(BigInteger num1, BigInteger num2) => num1 - num2;
-        public static BigInteger Multiply(BigInteger num1, BigInteger num2) => num1 * num2;
-        public static BigInteger DivideInt(BigInteger numerator, BigInteger denominator) => 
-            !denominator.IsZero ? numerator / denominator : throw new ArgumentException("Dividing a value by zero throw an exception", nameof(denominator));
-        public static string Add(string num1, string num2) => Add(Parse(num1), Parse(num2)).ToString();
-        public static string Subtract(string num1, string num2) => Subtract(Parse(num1), Parse(num2)).ToString();
-        public static string Multiply(string num1, string num2) => Multiply(Parse(num1), Parse(num2)).ToString();
-        public static string DivideInt(string numerator, string denominator) => DivideInt(Parse(numerator), Parse(denominator)).ToString();
-
-        public static string Divide(string numeratorValue, string denominatorValue)
-        {
-            BigInteger numerator = Parse(numeratorValue);
-            BigInteger denominator = Parse(denominatorValue);
-
-            BigInteger integerPart = DivideInt(numerator, denominator);
-            double fractionalPart = (double)(numerator % denominator) / (double)denominator;
-
-            return fractionalPart == 0 ? integerPart.ToString() :
-                                         integerPart.ToString() + fractionalPart.ToString().Substring(1);
+            InteractionInterface();
         }
 
-        private static BigInteger Parse(string num)
-        {
-            if (num is null)
+        private static void InteractionInterface()
+        { 
+            Console.Write("Input first integer number:  ");
+            string num1 = Console.ReadLine();
+            
+            Console.Write("Input second integer number: ");
+            string num2 = Console.ReadLine();
+
+            Console.WriteLine("Select the required operation\n" +
+                              "[1] Addition (+)\n" +
+                              "[2] Subtraction (-)\n" +
+                              "[3] Multiplication (*)\n" +
+                              "[4] Division (/)\n" +
+                              "[5] Division with fractional part (/)\n" +
+                              "[0] Exit\n" +
+                              "Another key for reset");
+            var keyInfo = Console.ReadKey();
+            Console.WriteLine("\n");
+
+            try
             {
-                throw new ArgumentNullException(nameof(num));
+                switch (keyInfo.KeyChar)
+                {
+                    case '1': Console.WriteLine($"{num1} + {num2} = {CalculationHandler.Add(num1, num2)}"); break;
+                    case '2': Console.WriteLine($"{num1} - {num2} = {CalculationHandler.Subtract(num1, num2)}"); break;
+                    case '3': Console.WriteLine($"{num1} * {num2} = {CalculationHandler.Multiply(num1, num2)}"); break;
+                    case '4': Console.WriteLine($"{num1} / {num2} = {CalculationHandler.DivideInt(num1, num2)}"); break;
+                    case '5': Console.WriteLine($"{num1} / {num2} = {CalculationHandler.Divide(num1, num2)}"); break;
+                    case '0': return;
+                    default: Console.WriteLine("Reset\n"); InteractionInterface(); return;
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine(ex);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex);
             }
 
-            if (string.IsNullOrWhiteSpace(num) || !BigInteger.TryParse(num, out BigInteger numInt))
-            {
-                throw new ArgumentException($"Can't parse to BigInteger value: \"{num}\"", nameof(num));
-            }
-
-            return numInt;
+            Console.WriteLine("\n");
+            InteractionInterface();
         }
     }
 }
