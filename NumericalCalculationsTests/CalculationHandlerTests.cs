@@ -1,10 +1,5 @@
 ﻿using NUnit.Framework;
-using NumericalCalculations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Numerics;
 
 namespace NumericalCalculations.Tests
@@ -12,7 +7,7 @@ namespace NumericalCalculations.Tests
     [TestFixture()]
     public class CalculationHandlerTests
     {
-        private static readonly (string, string, Type)[] StringsEmptyNullData =
+        private static readonly (string, string, Type)[] stringsEmptyNullData =
         {
             (string.Empty, string.Empty, typeof(ArgumentException)),
             ("   ", string.Empty, typeof(ArgumentException)),
@@ -22,7 +17,14 @@ namespace NumericalCalculations.Tests
             (null, string.Empty, typeof(ArgumentNullException)),
         };
 
-        private static readonly (string, string, string ExpectedResult)[] AddData =
+        private static readonly (string, string)[] fractionalNumbers =
+        {
+            ("1.5", "1"),
+            ("1", "1.5"),
+            ("1.5", "1.5")
+        };
+
+        private static readonly (string, string, string ExpectedResult)[] addData =
         {
             ("2", "10", "12"),
             ("120", "50", "170"),
@@ -34,7 +36,7 @@ namespace NumericalCalculations.Tests
                 "6403518010977936268702523352271186825700821361152399641009722487445951463873433928220167483422978340060000000000000000000000000000")
         };
 
-        private static readonly (string, string, string ExpectedResult)[] SubtractData =
+        private static readonly (string, string, string ExpectedResult)[] subtractData =
         {
             ("2", "10", "-8"),
             ("120", "50", "70"),
@@ -46,7 +48,7 @@ namespace NumericalCalculations.Tests
                 "-5754448741934976600189955822525908451201146448577669895740242792248703732876480731529689986551501354400000000000000000000000000000")
         };
 
-        private static readonly (string, string, string ExpectedResult)[] MultiplyData =
+        private static readonly (string, string, string ExpectedResult)[] multiplyData =
         {
             ("2", "10", "20"),
             ("120", "50", "6000"),
@@ -58,7 +60,7 @@ namespace NumericalCalculations.Tests
                 "1972840648340447549491172513152404321995213867393225701548742896103388147796134562451064566936054870905070233283029250764222255825602920466109873883410911245220390288325893598731183760394848353719650360900000000000000000000000000000000000000000000000000000000")
         };
 
-        private static readonly (string, string, string ExpectedResult)[] DivideIntData =
+        private static readonly (string, string, string ExpectedResult)[] divideIntData =
         {
             ("2", "10", "0"),
             ("120", "50", "2"),
@@ -70,40 +72,77 @@ namespace NumericalCalculations.Tests
                 "0")
         };
 
-        [TestCaseSource(nameof(StringsEmptyNullData))]
+        [TestCaseSource(nameof(stringsEmptyNullData))]
         public void AddTest_NullOrWhiteSpace_IsThrowExeption((string, string, Type) data)
         {
             // Act
             Assert.Throws(data.Item3, () => CalculationHandler.Add(data.Item1, data.Item2));
         }
 
-        [TestCaseSource(nameof(StringsEmptyNullData))]
+        [TestCaseSource(nameof(stringsEmptyNullData))]
         public void SubtractTest_NullOrWhiteSpace_IsThrowExeption((string, string, Type) data)
         {
             // Act
             Assert.Throws(data.Item3, () => CalculationHandler.Subtract(data.Item1, data.Item2));
         }
 
-        [TestCaseSource(nameof(StringsEmptyNullData))]
+        [TestCaseSource(nameof(stringsEmptyNullData))]
         public void MultiplyTest_NullOrWhiteSpace_IsThrowExeption((string, string, Type) data)
         {
             // Act
             Assert.Throws(data.Item3, () => CalculationHandler.Multiply(data.Item1, data.Item2));
         }
 
-        [TestCaseSource(nameof(StringsEmptyNullData))]
+        [TestCaseSource(nameof(stringsEmptyNullData))]
         public void DivideTest_NullOrWhiteSpace_IsThrowExeption((string, string, Type) data)
         {
             // Act
             Assert.Throws(data.Item3, () => CalculationHandler.Divide(data.Item1, data.Item2));
         }
 
-        [TestCaseSource(nameof(StringsEmptyNullData))]
+        [TestCaseSource(nameof(stringsEmptyNullData))]
         public void DivideIntTest_NullOrWhiteSpace_IsThrowExeption((string, string, Type) data)
         {
             // Act
             Assert.Throws(data.Item3, () => CalculationHandler.DivideInt(data.Item1, data.Item2));
         }
+
+
+        [TestCaseSource(nameof(fractionalNumbers))]
+        public void AddTest_DoubleNumbers_IsThrowExeption((string, string) data)
+        {
+            // Act
+            Assert.Throws<ArgumentException>(() => CalculationHandler.Add(data.Item1, data.Item2));
+        }
+
+        [TestCaseSource(nameof(fractionalNumbers))]
+        public void SubtractTest_DoubleNumbers_IsThrowExeption((string, string) data)
+        {
+            // Act
+            Assert.Throws<ArgumentException>(() => CalculationHandler.Subtract(data.Item1, data.Item2));
+        }
+
+        [TestCaseSource(nameof(fractionalNumbers))]
+        public void MultiplyTest_DoubleNumbers_IsThrowExeption((string, string) data)
+        {
+            // Act
+            Assert.Throws<ArgumentException>(() => CalculationHandler.Multiply(data.Item1, data.Item2));
+        }
+
+        [TestCaseSource(nameof(fractionalNumbers))]
+        public void DivideIntTest_DoubleNumbers_IsThrowExeption((string, string) data)
+        {
+            // Act
+            Assert.Throws<ArgumentException>(() => CalculationHandler.DivideInt(data.Item1, data.Item2));
+        }
+
+        [TestCaseSource(nameof(fractionalNumbers))]
+        public void DivideTest_DoubleNumbers_IsThrowExeption((string, string) data)
+        {
+            // Act
+            Assert.Throws<ArgumentException>(() => CalculationHandler.Divide(data.Item1, data.Item2));
+        }
+
 
         [Test]
         public void DivideTest_DividingByZero_IsThrowExeption()
@@ -120,7 +159,7 @@ namespace NumericalCalculations.Tests
         }
 
 
-        [TestCaseSource(nameof(AddData))]
+        [TestCaseSource(nameof(addData))]
         public void AddTest_BigInteger((string, string, string ExpectedResult) data)
         {
             // Averange
@@ -131,7 +170,7 @@ namespace NumericalCalculations.Tests
             Assert.AreEqual(data.ExpectedResult, CalculationHandler.Add(num1, num2).ToString());
         }
 
-        [TestCaseSource(nameof(SubtractData))]
+        [TestCaseSource(nameof(subtractData))]
         public void SubtractTest_BigInteger((string, string, string ExpectedResult) data)
         {
             // Averange
@@ -142,7 +181,7 @@ namespace NumericalCalculations.Tests
             Assert.AreEqual(data.ExpectedResult, CalculationHandler.Subtract(num1, num2).ToString());
         }
 
-        [TestCaseSource(nameof(MultiplyData))]
+        [TestCaseSource(nameof(multiplyData))]
         public void MultiplyTest_BigInteger((string, string, string ExpectedResult) data)
         {
             // Averange
@@ -153,7 +192,7 @@ namespace NumericalCalculations.Tests
             Assert.AreEqual(data.ExpectedResult, CalculationHandler.Multiply(num1, num2).ToString());
         }
 
-        [TestCaseSource(nameof(DivideIntData))]
+        [TestCaseSource(nameof(divideIntData))]
         public void DivideIntTest_BigInteger((string, string, string ExpectedResult) data)
         {
             // Averange
@@ -165,21 +204,21 @@ namespace NumericalCalculations.Tests
         }
 
 
-        [TestCaseSource(nameof(AddData))]
+        [TestCaseSource(nameof(addData))]
         public void AddTest((string, string, string ExpectedResult) data) =>
             Assert.AreEqual(data.ExpectedResult, CalculationHandler.Add(data.Item1, data.Item2));
 
-        [TestCaseSource(nameof(SubtractData))]
+        [TestCaseSource(nameof(subtractData))]
         public void SubtractTest((string, string, string ExpectedResult) data) => 
             Assert.AreEqual(data.ExpectedResult, CalculationHandler.Subtract(data.Item1, data.Item2));
 
-        [TestCaseSource(nameof(MultiplyData))]
+        [TestCaseSource(nameof(multiplyData))]
         public void MultiplyTest((string, string, string ExpectedResult) data) =>
             Assert.AreEqual(data.ExpectedResult, CalculationHandler.Multiply(data.Item1, data.Item2));
 
-        [TestCaseSource(nameof(DivideIntData))]
+        [TestCaseSource(nameof(divideIntData))]
         public void DivideIntTest((string, string, string ExpectedResult) data) =>
-            Assert.AreEqual(data.ExpectedResult, CalculationHandler.DivideInt(data.Item1, data.Item2));
+            Assert.AreEqual(data.ExpectedResult, CalculationHandler.DivideInt(data.Item1, data.Item2)); 
 
 
         [TestCase("2", "10", ExpectedResult = "0.2")]
