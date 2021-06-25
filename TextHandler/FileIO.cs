@@ -11,73 +11,61 @@ namespace TextHandler
         /// Buffer size that is better for reading a huge text file if rely on tests
         /// </summary>
         private const int READER_BUFFER_SIZE = 4096;
-        public static long CountReadedBytesFile { get; private set; }
 
         public static FileStructure ReadFileData(string fileName)
         {
             FileStructure fileStructure;
+            ProgressBar progressBar;
 
-            try
+            CheckFileExists(fileName);
+            using (var fileStream = File.OpenRead(fileName))
             {
-                CheckFileExists(fileName);
-                InterfaceHandler.ResetProgressBar();
+                fileStructure = new FileStructure(fileName, fileStream.Length);
+                progressBar = new ProgressBar(fileStructure.fileSize, 1);
 
-                using (var fileStream = File.OpenRead(fileName))
+                using (StreamReader reader = new StreamReader(fileStream, Encoding.UTF8, true, READER_BUFFER_SIZE))
                 {
-                    fileStructure = new FileStructure(fileStream.Length, fileName);
-                    using (StreamReader reader = new StreamReader(fileStream, Encoding.UTF8, true, READER_BUFFER_SIZE))
+                    string dataLine;
+                    while ((dataLine = reader.ReadLine()) != null)
                     {
-                        string dataLine;
-                        while ((dataLine = reader.ReadLine()) != null)
-                        {
-                            CountReadedBytesFile += FileStructure.AnalazyLine(fileStructure, dataLine);
-                            InterfaceHandler.RefreshProgressBar(CountReadedBytesFile, fileStructure.fileSize);
-                        }
+                        progressBar.Update(FileStructure.AnalazyLine(fileStructure, dataLine));
                     }
                 }
-
-                CountReadedBytesFile = fileStructure.fileSize;
-                InterfaceHandler.RefreshProgressBar(CountReadedBytesFile, fileStructure.fileSize);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
             }
 
+            progressBar.Update(fileStructure.fileSize);
             return fileStructure;
         }
 
-        public static bool WriteFileData(FileStructure fileStructure)
+        public static string WriteFileData(FileStructure fileStructure)
         {
-            try
+            if (fileStructure == null)
             {
-                if (fileStructure == null)
-                {
-                    throw new ArgumentNullException(nameof(fileStructure));
-                }
-
-                if (fileStructure.fileName is null)
-                {
-                    throw new ArgumentNullException(nameof(fileStructure.fileName));
-                }
-
-                if (string.IsNullOrWhiteSpace(fileStructure.fileName))
-                {
-                    throw new ArgumentException("It's empty or contains only spaces");
-                }
-
-                string saveFullPath = fileStructure.fileFullPath.Remove(fileStructure.fileFullPath.Length - Path.GetExtension(fileStructure.fileName).Length) + ".json";
-                File.WriteAllText(saveFullPath, JsonConvert.SerializeObject(fileStructure));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
+                throw new ArgumentNullException(nameof(fileStructure));
             }
 
-            return true;
+            if (string.IsNullOrWhiteSpace(fileStructure.fileName))
+            {
+                throw new ArgumentException(nameof(fileStructure.fileName) + " empty or contains only spaces");
+            }
+
+            if (string.IsNullOrWhiteSpace(fileStructure.fileFullPath))
+            {
+                throw new ArgumentException(nameof(fileStructure.fileFullPath) + " empty or contains only spaces");
+            }
+
+            string saveFullPath = fileStructure.fileFullPath.Remove(fileStructure.fileFullPath.Length - Path.GetExtension(fileStructure.fileName).Length) + ".json";
+            string serializeObject = JsonConvert.SerializeObject(fileStructure,
+                                                          Formatting.Indented,
+                                                          new JsonSerializerSettings()
+                                                          {
+                                                              ContractResolver = new OrderedContractResolver()
+                                                          });
+            File.WriteAllText(saveFullPath, serializeObject);
+            return serializeObject;
         }
+
+        public static FileInfo[] GetTextFiles(string pathOfDirectory = null) => new DirectoryInfo(pathOfDirectory ?? Directory.GetCurrentDirectory()).GetFiles("*.txt");
 
         private static void CheckFileExists(string fileName)
         {

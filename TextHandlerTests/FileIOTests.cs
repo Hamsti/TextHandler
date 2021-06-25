@@ -22,7 +22,7 @@ namespace TextHandler.Tests
         [Test()]
         public void WriteFileDataTest()
         {
-            Assert.IsTrue(FileIO.WriteFileData(FileIO.ReadFileData(Directory.GetCurrentDirectory() + @"\TextHandler\bin\Debug\ShortTestFile.txt")));
+            Assert.IsNotNull(FileIO.WriteFileData(FileIO.ReadFileData(Directory.GetCurrentDirectory() + @"\TextHandler\bin\Debug\ShortTestFile.txt")));
         }
     }
 }

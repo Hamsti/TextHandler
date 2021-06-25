@@ -49,7 +49,9 @@
     <Compile Include="FileIO.cs" />
     <Compile Include="FileStructure.cs" />
     <Compile Include="InterfaceHandler.cs" />
+    <Compile Include="OrderedContractResolver.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressBar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

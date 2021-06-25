@@ -1,47 +1,126 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace TextHandler
 {
     public static class InterfaceHandler
     {
-        private const int STEP_PROGRESS_BAR = 5;
-        private const int MAX_VALUE_PROGRESSBAR = 100;
-        private const char FILL_BLOCK = '#';
-        private const char EMPTY_BLOCK = '-';
-        private static int currentPercent = default;
-        public static string additionalMessageProgressBar = "Performing text analysis... ";
+        private static string pathOfDirectory = null;
 
-        public static void ResetProgressBar() => currentPercent = default;
-
-        public static void RefreshProgressBar(long currentSize, long fullFileSize)
+        public static void DisplayMenu()
         {
-            if (currentSize >= fullFileSize * currentPercent / 100)
+            try
             {
-                WriteProgressBar(currentPercent + STEP_PROGRESS_BAR > MAX_VALUE_PROGRESSBAR ? MAX_VALUE_PROGRESSBAR : currentPercent);
-                currentPercent += STEP_PROGRESS_BAR;
-            }
+                StringBuilder message = new StringBuilder();
+                var menuItems = GetDirectoryFiles();
+                foreach (var menuValue in menuItems)
+                {
+                    message.AppendLine(menuValue.Key + ". " + menuValue.Value);
+                }
 
-            if (currentSize == fullFileSize && currentPercent <= MAX_VALUE_PROGRESSBAR)
+                Console.Write(message + "select a menu item: ");
+                var fileStructure = SelectMenuItem(menuItems);
+                if (fileStructure != null)
+                {
+                    WriteDisplayTextAnalysis(fileStructure);
+                    DisplayMenu();
+                }
+            }
+            catch (Exception ex)
             {
-                RefreshProgressBar(currentSize, fullFileSize);
+                Console.WriteLine(ex.Message + '\n');
+                DisplayMenu();
             }
         }
 
-        public static void InteractionInterface()
+        public static void ExecuteAnalyseTextFile(string arg)
         {
-            throw new NotImplementedException();
+            try
+            {
+                FileStructure fileStructure = FileIO.ReadFileData(arg);
+                if (fileStructure != null)
+                {
+                    WriteDisplayTextAnalysis(fileStructure);
+                    FileIO.WriteFileData(fileStructure);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\nPress any button to exit...");
+                Console.ReadKey();
+            }
         }
 
-        private static void WriteProgressBar(int percent)
+        public static void WriteDisplayTextAnalysis(FileStructure fileStructure)
         {
-            string message = additionalMessageProgressBar + "[";
-            for (int i = 0; i < MAX_VALUE_PROGRESSBAR; i += 10)
+            if (fileStructure is null)
             {
-                message += i >= percent ? EMPTY_BLOCK : FILL_BLOCK;
+                throw new ArgumentNullException(nameof(fileStructure), "An exception was thrown when displaying text analysis\n");
             }
 
-            message += string.Format("] {0,3:##0}% ", percent);
-            Console.Write(new string('\b', message.Length) + message);
+            Console.WriteLine('\n' + FileIO.WriteFileData(fileStructure) + '\n');
+        }
+
+        private static FileStructure SelectMenuItem(Dictionary<int, string> menuItems)
+        {
+            if (int.TryParse(Console.ReadLine(), out int indexMenuItem) && indexMenuItem >= 0 && indexMenuItem < menuItems.Count)
+            {
+                if (indexMenuItem == menuItems.Count - 2)
+                {
+                    ChangeFolder();
+                    DisplayMenu();
+                }
+                else if (indexMenuItem == menuItems.Count - 1)
+                {
+                    Console.Write("Input path to file: ");
+                    return FileIO.ReadFileData(Console.ReadLine());
+                }
+                else if (indexMenuItem != default)
+                {
+                    return FileIO.ReadFileData((pathOfDirectory ?? string.Empty) + menuItems[indexMenuItem]);
+                }
+
+                return null;
+            }
+            
+            throw new ArgumentException("Unknown menu item", nameof(indexMenuItem));
+        }
+
+        private static void ChangeFolder()
+        {
+            Console.Write("Input path to folder: ");
+            pathOfDirectory = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(pathOfDirectory) || !Directory.Exists(pathOfDirectory))
+            {
+                Console.WriteLine("Unknown path to directory...\nchange on directory by default");
+                pathOfDirectory = null;
+            }
+            else
+            {
+                pathOfDirectory += pathOfDirectory.EndsWith("\\") ? string.Empty : "\\";
+            }
+
+            Console.WriteLine();
+        }
+
+        private static Dictionary<int, string> GetDirectoryFiles()
+        {
+            int index = default;
+            var directoryFiles = FileIO.GetTextFiles(pathOfDirectory);
+            Dictionary<int, string> keyMenuValue = new Dictionary<int, string>();
+
+            foreach (var file in directoryFiles)
+            {
+                keyMenuValue.Add(++index, file.Name);
+            }
+
+            keyMenuValue.Add(++index, "input custom path to folder");
+            keyMenuValue.Add(++index, "input custom path to file");
+            keyMenuValue.Add(default, "select to exit...");
+
+            return keyMenuValue;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace TextHandler
 {
@@ -57,7 +56,7 @@ namespace TextHandler
             {
                 if (args.Length == 1 && (args[0] == "--help" || args[0] == "-h"))
                 {
-                    Console.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".exe - text structure analyzer" +
+                    Console.WriteLine(Assembly.GetExecutingAssembly().GetName().Name + ".exe - text structure analyzer" +
                                       "\n-h, --help - get help" +
                                       "\n[args] - name of text file(-s) that doesn't contain space" +
                                       "\n[args] - name of text file(-s) that contain spaces and take each name into quotes)");
@@ -66,16 +65,13 @@ namespace TextHandler
 
                 foreach (string arg in args)
                 {
-                    Console.WriteLine(FileIO.ReadFileData(arg)?.fileName ?? "Exception");
+                    InterfaceHandler.ExecuteAnalyseTextFile(arg);
                 }
             }
             else
             {
-                InterfaceHandler.InteractionInterface();
+                InterfaceHandler.DisplayMenu();
             }
-
-            Console.Write("\nPress any button to exit...");
-            Console.ReadKey();
         }
     }
 }

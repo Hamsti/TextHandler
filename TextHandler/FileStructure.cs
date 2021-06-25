@@ -27,7 +27,7 @@ namespace TextHandler
         public int WordsCount => words.Sum(s => s.Value);
         public int WordsWithHyphenCount => wordsWithHyphen.Sum(s => s.Value);
 
-        public FileStructure(long fileSize, string fileName)
+        public FileStructure(string fileName, long fileSize)
         {
             this.fileSize = fileSize;
             fileFullPath = Path.GetFullPath(fileName) ?? throw new ArgumentNullException(nameof(fileName));
@@ -42,9 +42,7 @@ namespace TextHandler
 
         public static long AnalazyLine(FileStructure fileStructure, string dataLine)
         {
-            long countReadedBytesFile = FileIO.CountReadedBytesFile < fileStructure.fileSize ? Encoding.UTF8.GetByteCount(dataLine) : fileStructure.fileSize - FileIO.CountReadedBytesFile;
-            
-            return countReadedBytesFile;
+            return Encoding.UTF8.GetByteCount(dataLine);
             
             throw new NotImplementedException();
         }
