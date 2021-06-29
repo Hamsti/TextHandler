@@ -15,7 +15,10 @@ namespace TextHandler
         private long countReadedBytesFile;
 
         /// <param name="fullFileSize">Full size of file</param>
-        public ProgressBar(long fullFileSize) => this.fullFileSize = fullFileSize;
+        public ProgressBar(long fullFileSize)
+        {
+            this.fullFileSize = fullFileSize >= 0 ? fullFileSize : throw new ArgumentOutOfRangeException(nameof(fullFileSize));
+        }
 
         /// <param name="stepProgressBar">1..99 step when progress bar update, or 100 for cancel display it</param>
         public ProgressBar(long fullFileSize, 
@@ -24,7 +27,8 @@ namespace TextHandler
         {
             this.stepProgressBar = stepProgressBar > 0 && stepProgressBar <= MAX_VALUE_PROGRESSBAR ? stepProgressBar :
                 throw new ArgumentOutOfRangeException(nameof(stepProgressBar));
-            this.additionalMessageProgressBar = additionalMessageProgressBar;
+            this.additionalMessageProgressBar = additionalMessageProgressBar ?? 
+                throw new ArgumentNullException(nameof(additionalMessageProgressBar));
         }
 
         /// <summary>
@@ -33,7 +37,11 @@ namespace TextHandler
         /// <param name="countBytes">The number of bytes to add to the size of the file read</param>
         public void Update(long countBytes)
         {
-            if (stepProgressBar == MAX_VALUE_PROGRESSBAR)
+            if (countBytes < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(countBytes));
+            }
+            else if (stepProgressBar == MAX_VALUE_PROGRESSBAR)
             {
                 return;
             }

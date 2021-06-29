@@ -39,7 +39,7 @@ namespace TextHandler
         {
             try
             {
-                FileStructure fileStructure = FileIO.ReadFileData(arg);
+                FileStructure fileStructure = FileIO.ReadFileData(arg ?? throw new ArgumentNullException(nameof(arg)));
                 if (fileStructure != null)
                 {
                     WriteDisplayTextAnalysis(fileStructure);
@@ -65,6 +65,11 @@ namespace TextHandler
 
         private static FileStructure SelectMenuItem(Dictionary<int, string> menuItems)
         {
+            if (menuItems is null)
+            {
+                throw new ArgumentNullException(nameof(menuItems));
+            }
+
             if (int.TryParse(Console.ReadLine(), out int indexMenuItem) && indexMenuItem >= 0 && indexMenuItem < menuItems.Count)
             {
                 if (indexMenuItem == menuItems.Count - 2)

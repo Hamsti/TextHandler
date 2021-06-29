@@ -21,25 +21,26 @@ namespace TextHandler
             using (var fileStream = File.OpenRead(fileName))
             {
                 fileStructure = new FileStructure(fileName, fileStream.Length);
-                progressBar = new ProgressBar(fileStructure.fileSize, 1);
+                progressBar = new ProgressBar(fileStructure.fileSize, 3);
 
                 using (StreamReader reader = new StreamReader(fileStream, Encoding.UTF8, true, READER_BUFFER_SIZE))
                 {
                     string dataLine;
                     while ((dataLine = reader.ReadLine()) != null)
                     {
-                        progressBar.Update(FileStructure.AnalazyLine(fileStructure, dataLine));
+                        fileStructure.AnalazyLine(dataLine);
+                        progressBar.Update(Encoding.UTF8.GetByteCount(dataLine));
                     }
                 }
             }
 
             progressBar.Update(fileStructure.fileSize);
-            return fileStructure;
+            return fileStructure.SortDictionaries();
         }
 
         public static string WriteFileData(FileStructure fileStructure)
         {
-            if (fileStructure == null)
+            if (fileStructure is null)
             {
                 throw new ArgumentNullException(nameof(fileStructure));
             }
@@ -65,10 +66,15 @@ namespace TextHandler
             return serializeObject;
         }
 
-        public static FileInfo[] GetTextFiles(string pathOfDirectory = null) => new DirectoryInfo(pathOfDirectory ?? Directory.GetCurrentDirectory()).GetFiles("*.txt");
+        public static FileInfo[] GetTextFiles(string pathOfDirectory) => new DirectoryInfo(pathOfDirectory ?? Directory.GetCurrentDirectory()).GetFiles("*.txt");
 
         private static void CheckFileExists(string fileName)
         {
+            if (fileName is null)
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+
             if (!File.Exists(fileName))
             {
                 throw new ArgumentException("File doesn't exist by path: " + fileName, nameof(fileName));
