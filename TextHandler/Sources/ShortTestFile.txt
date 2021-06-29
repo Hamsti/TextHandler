@@ -1,0 +1,8 @@
+i am making application in C#. Here i want to find out the number of bytes in particular file. Here i am using code as
+
+using(FileStream fs=new FileStream(filename,FileMode.Open,FileAccess.Read))
+{
+    //Here i want to find the number of Bytes.
+    //Some more code.
+}
+Please help me.Thanks in advance.
