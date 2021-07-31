@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextHandler", "TextHandler\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextHandlerTests", "TextHandlerTests\TextHandlerTests.csproj", "{E670BACD-0E20-4EF0-B766-B395A3306D01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericalCalculations", "NumericalCalculations\NumericalCalculations.csproj", "{F58E18F3-503C-4CB8-9E06-3433C2246832}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericalCalculationsTests", "NumericalCalculationsTests\NumericalCalculationsTests.csproj", "{E659EA53-5B7F-4AC2-B356-7F46CD29BDE0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +21,6 @@ Global
 		{E670BACD-0E20-4EF0-B766-B395A3306D01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E670BACD-0E20-4EF0-B766-B395A3306D01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E670BACD-0E20-4EF0-B766-B395A3306D01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F58E18F3-503C-4CB8-9E06-3433C2246832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F58E18F3-503C-4CB8-9E06-3433C2246832}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F58E18F3-503C-4CB8-9E06-3433C2246832}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F58E18F3-503C-4CB8-9E06-3433C2246832}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E659EA53-5B7F-4AC2-B356-7F46CD29BDE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E659EA53-5B7F-4AC2-B356-7F46CD29BDE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E659EA53-5B7F-4AC2-B356-7F46CD29BDE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E659EA53-5B7F-4AC2-B356-7F46CD29BDE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
